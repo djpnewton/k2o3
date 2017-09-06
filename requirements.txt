@@ -1,0 +1,2 @@
+mnemonic==0.17
+python-Levenshtein==0.12.0
