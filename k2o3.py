@@ -128,10 +128,9 @@ def test_key_splitting(original_key, bits):
     return key_a, key_b, key_c
 
 def test_key_print(key_a, key_b, key_c, bits):
-    apb  = "(key_a + key_b) %% 2^%d" % bits
-    _2bpc = "((2*key_b %% 2^%d) + key_c) %% 2^%d" % (bits, bits)
-    ##TODO: need symbol for underflow from below 0 to 2^bits!
-    _2amc = "((2*key_a %% 2^%d) - key_c) ?%%? 0" % (bits,)
+    apb  = "key_a + key_b                  \t(mod 2^%d)" % bits
+    _2bpc = "(2 * key_b mod 2^%d) + key_c  \t(mod 2^%d)" % (bits, bits)
+    _2amc = "(2 * key_a mod 2^%d) - key_c  \t(mod 2^%d)" % (bits, bits)
     print
     print "key_a:"
     print "====="
@@ -142,7 +141,7 @@ def test_key_print(key_a, key_b, key_c, bits):
     print "recover via:"
     print "============"
     print apb
-    print " or"
+    print " -or-"
     print _2amc
     print
     print "---8<-------------------------------------------------------"
@@ -156,7 +155,7 @@ def test_key_print(key_a, key_b, key_c, bits):
     print "recover via:"
     print "============"
     print apb
-    print " or"
+    print " -or-"
     print _2bpc
     print
     print "---8<-------------------------------------------------------"
@@ -170,7 +169,7 @@ def test_key_print(key_a, key_b, key_c, bits):
     print "recover via:"
     print "============"
     print _2bpc
-    print " or"
+    print " -or-"
     print _2amc
     print
 
