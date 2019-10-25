@@ -1,2 +1,3 @@
-mnemonic==0.17
+mnemonic==0.19
 python-Levenshtein==0.12.0
+pbkdf2==1.3

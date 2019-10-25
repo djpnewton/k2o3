@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import os
 import binascii
@@ -6,7 +7,7 @@ import argparse
 from mnemonic import Mnemonic
 from Levenshtein import distance
 
-VERSION=3
+VERSION=4
 
 SUPPORTED_BITS = [128, 256]
 
@@ -40,21 +41,21 @@ def check_mnemonic_words(mnemonic):
     words = mnemonic.split(" ") 
     for word in words:
         if not word in m.wordlist:
-            print "  '%s' not in word list" % word
+            print("  '%s' not in word list" % word)
             # check expand_word candidate
             expand_candidate = m.expand_word(word)
             if expand_candidate != word:
-                print "    * perhaps try '%s'" % expand_candidate
+                print("    * perhaps try '%s'" % expand_candidate)
             # check levenshtein distance
             min_dist = 9999
             dist_candidate = m.wordlist[0]
             for candidate in m.wordlist:
-                dist = distance(candidate, word)
+                dist = distance(str(candidate), str(word))
                 if dist < min_dist:
                     min_dist = dist
                     dist_candidate = candidate
             if dist_candidate != expand_candidate:
-                print "    - perhaps try '%s'" % dist_candidate
+                print("    - perhaps try '%s'" % dist_candidate)
 
 def sub(a, b, bits):
     # subtract a from b and if the result is negative
@@ -81,9 +82,9 @@ def print_words(words, max_per_line=12, offset1=0, offset2=7):
         line += words[i] + " "
         c += 1
         if c % max_per_line == 0:
-            print line,
+            print(line, end=" ")
             line = "\n" + " " * offset2
-    print
+    print()
 
 def remove_hex_prefix(data):
     prefix = data[:2]
@@ -169,47 +170,47 @@ def key_parts_print(key_a, key_b, key_c, bits):
     apb  = "key_a + key_b                  \t(mod 2^%d)" % bits
     _2bpc = "(2 * key_b mod 2^%d) + key_c  \t(mod 2^%d)" % (bits, bits)
     _2amc = "(2 * key_a mod 2^%d) - key_c  \t(mod 2^%d)" % (bits, bits)
-    print
-    print "key_a:"
-    print "====="
-    print "bip39:",
+    print()
+    print("key_a:")
+    print("=====")
+    print("bip39:",)
     print_words(int_to_mnemonic(key_a, bits))
-    print "hex  :", "{0:#0{1}x}".format(key_a, 2 + bits/8)
-    print
-    print "recover via:"
-    print "============"
-    print apb
-    print " -or-"
-    print _2amc
-    print
-    print "---8<-------------------------------------------------------"
-    print
-    print "key_b"
-    print "====="
-    print "bip39:",
+    print("hex  :", "{0:#0{1}x}".format(key_a, 2 + bits/8))
+    print()
+    print("recover via:")
+    print("============")
+    print(apb)
+    print(" -or-")
+    print(_2amc)
+    print()
+    print("---8<-------------------------------------------------------")
+    print()
+    print("key_b")
+    print("=====")
+    print("bip39:",)
     print_words(int_to_mnemonic(key_b, bits))
-    print "hex  :", "{0:#0{1}x}".format(key_b, 2 + bits/4)
-    print
-    print "recover via:"
-    print "============"
-    print apb
-    print " -or-"
-    print _2bpc
-    print
-    print "---8<-------------------------------------------------------"
-    print
-    print "key_c:"
-    print "====="
-    print "bip39:",
+    print("hex  :", "{0:#0{1}x}".format(key_b, 2 + bits/4))
+    print()
+    print("recover via:")
+    print("============")
+    print(apb)
+    print(" -or-")
+    print(_2bpc)
+    print()
+    print("---8<-------------------------------------------------------")
+    print()
+    print("key_c:")
+    print("=====")
+    print("bip39:",)
     print_words(int_to_mnemonic(key_c, bits))
-    print "hex  :", "{0:#0{1}x}".format(key_c, 2 + bits/8)
-    print
-    print "recover via:"
-    print "============"
-    print _2bpc
-    print " -or-"
-    print _2amc
-    print
+    print("hex  :", "{0:#0{1}x}".format(key_c, 2 + bits/8))
+    print()
+    print("recover via:")
+    print("============")
+    print(_2bpc)
+    print(" -or-")
+    print(_2amc)
+    print()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Simple 2 of 3 key splitting of secrets")
@@ -246,16 +247,16 @@ if __name__ == "__main__":
         if args.key_c:
             c += 1
         if c < 2:
-            print "Not enough key parts"
+            print("Not enough key parts")
         else:
             key, bits = join_key(args.key_a, args.key_b, args.key_c, args.hex)
-            print " -",
+            print(" -", end=" ")
             print_words(int_to_mnemonic(key, bits), offset2=3)
-            print " - %s" % seed_to_hex(int_to_buffer(key, bits))
+            print(" - %s" % seed_to_hex(int_to_buffer(key, bits)))
     if args.subparser == "checkwords":
         check_mnemonic_words(args.words)
     if args.subparser == "key":
         key = random_seed(args.bits)
-        print " -",
+        print(" -", end=" ")
         print_words(int_to_mnemonic(seed_to_int(key), args.bits), offset2=3)
-        print " - %s" % seed_to_hex(key)
+        print(" - %s" % seed_to_hex(key))
